@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>چک‌لیست ارزیابی پایگاه‌های اورژانس پیش‌بیمارستانی - دانشگاه علوم پزشکی مازندران</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+<style>
+:root{--p:#c62828;--p2:#8e0000;--b:#1565c0;--g:#2e7d32;--y:#ef8f00;--bg:#f3f5f9;--c:#fff;--t:#1f2937;--m:#6b7280;--l:#e5e7eb;--r:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font-family:inherit;font-size:15px}
+#app-header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:14px 16px 0;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+.hdr-top{display:flex;align-items:center;gap:12px;max-width:1100px;margin:auto}
+.hdr-logo{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.hdr-top h1{font-size:16px;font-weight:800;line-height:1.4}
+.hdr-top p{font-size:12px;opacity:.85}
+#main-tabs{display:flex;gap:6px;max-width:1100px;margin:10px auto 0}
+.tab-btn{flex:1;border:0;background:rgba(255,255,255,.15);color:#fff;padding:10px;border-radius:12px 12px 0 0;cursor:pointer;font-weight:700}
+.tab-btn.active{background:var(--bg);color:var(--p)}
+main{max-width:1100px;margin:auto;padding:14px 12px 110px}
+#step-nav{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:thin}
+.step-pill{flex-shrink:0;border:1px solid var(--l);background:#fff;border-radius:30px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--m);display:flex;gap:6px;align-items:center}
+.step-pill b{width:22px;height:22px;border-radius:50%;background:var(--l);display:grid;place-items:center;font-size:12px}
+.step-pill.active{border-color:var(--p);color:var(--p);font-weight:700}.step-pill.active b{background:var(--p);color:#fff}
+.step-pill.done b{background:var(--g);color:#fff}
+#progress{height:6px;background:var(--l);border-radius:6px;overflow:hidden;margin-bottom:12px}#progress i{display:block;height:100%;background:linear-gradient(90deg,var(--g),#66bb6a);transition:.3s}
+.sec-title{display:flex;align-items:center;gap:10px;margin:6px 0 12px;font-size:18px;font-weight:800}
+.sec-title i{width:40px;height:40px;border-radius:12px;background:#fde8e8;color:var(--p);display:grid;place-items:center}
+.card{background:var(--c);border-radius:var(--r);box-shadow:0 1px 4px rgba(0,0,0,.06);padding:16px;margin-bottom:14px;border:1px solid #edf0f4}
+.card-h{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--b);margin-bottom:10px;gap:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.fld.wide{grid-column:1/-1}
+.fld label.lb{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.fld input[type=text],.fld input[type=number],.fld select,.fld textarea{width:100%;border:1.5px solid var(--l);border-radius:10px;padding:10px 12px;background:#fafbfc;outline:none;transition:.2s}
+.fld textarea{min-height:80px;resize:vertical}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--b);background:#fff;box-shadow:0 0 0 3px rgba(21,101,192,.12)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--l);background:#fff;border-radius:30px;padding:7px 14px;cursor:pointer;font-size:14px;user-select:none;transition:.15s}
+.chip.on{background:var(--b);border-color:var(--b);color:#fff}
+.chip.multi.on{background:var(--g);border-color:var(--g)}
+.chip.multi.on::before{content:"✓ "}
+.other-in{margin-top:8px}
+.st-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.st-opt{border:1.5px solid var(--l);border-radius:12px;padding:9px 11px;cursor:pointer;background:#fff;font-size:13px;color:var(--m)}
+.st-opt b{display:block;font-size:14px;color:var(--t)}
+.st-opt.on.s0{border-color:var(--g);background:#e8f5e9}.st-opt.on.s1{border-color:var(--y);background:#fff6e5}.st-opt.on.s2,.st-opt.on.s3,.st-opt.on.s4{border-color:var(--p);background:#fdecea}
+.btn{border:0;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.btn-p{background:var(--p);color:#fff}.btn-b{background:var(--b);color:#fff}.btn-g{background:var(--g);color:#fff}.btn-l{background:#eef1f5;color:var(--t)}
+.btn-sm{padding:6px 11px;font-size:13px}.btn-del{background:#fdecea;color:var(--p)}
+#form-footer{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -2px 12px rgba(0,0,0,.1);padding:10px 12px calc(10px + env(safe-area-inset-bottom));z-index:40}
+#form-footer .in{max-width:1100px;margin:auto;display:flex;gap:8px;justify-content:space-between}
+#form-footer .btn{flex:1;max-width:220px}
+.sum-box{background:#e3f2fd;color:var(--b);padding:10px 14px;border-radius:10px;font-weight:800;margin-top:6px}
+.hidden{display:none!important}
+/* calendar */
+#cal-pop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:grid;place-items:center;padding:12px}
+.cal{background:#fff;border-radius:16px;width:100%;max-width:340px;padding:14px}
+.cal-h{display:flex;justify-content:space-between;align-items:center;font-weight:800;margin-bottom:8px;gap:6px}
+.cal-h select{border:1px solid var(--l);border-radius:8px;padding:4px}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-g span{font-size:12px;color:var(--m)}
+.cal-g button{border:0;background:#f5f6f8;border-radius:8px;padding:8px 0;cursor:pointer}
+.cal-g button.sel{background:var(--p);color:#fff}.cal-g button.td{outline:2px solid var(--b)}
+/* report */
+#report-toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;padding:6px 0}
+.coldel{background:none;border:0;color:var(--p);cursor:pointer;font-weight:800;font-size:14px}
+.hr-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))!important}
+.cal-today{display:flex;gap:6px;margin-top:10px}.cal-today .btn{flex:1}
+.date-row{display:flex;gap:6px}.date-row input{flex:1;cursor:pointer}
+.sec-hint{font-size:13px;color:var(--m);margin:-6px 0 12px}
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:16px}
+#report-doc{background:#fff;border-radius:var(--r);padding:16px}
+.rp-head{text-align:center;border-bottom:3px double var(--p);padding-bottom:10px;margin-bottom:14px}
+.rp-head h2{font-size:18px;color:var(--p2)}.rp-head p{font-size:13px;color:var(--m)}
+.rp-sec{margin-bottom:20px;page-break-inside:auto}
+.rp-sec h3{background:var(--p);color:#fff;padding:8px 12px;border-radius:8px 8px 0 0;font-size:15px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #ddd;border-top:0;border-radius:0 0 8px 8px}
+table.rt{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
+table.rt th,table.rt td{border:1px solid #d9dde3;padding:7px 8px;text-align:right;vertical-align:top;word-break:break-word}
+table.rt th{background:#eef2f7;font-weight:800;white-space:nowrap;position:sticky;top:0}
+table.rt td[contenteditable]:focus{outline:2px solid var(--b);background:#fffde7}
+table.rt tr:nth-child(even) td{background:#fafbfc}
+table.rt td.grp{background:#fff3e0!important;font-weight:700;color:#8a4b00}
+table.rt tr.total td{background:#e3f2fd!important;font-weight:800}
+.tb-acts{display:flex;gap:4px}.tb-acts button{background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px}
+.rowdel{background:none;border:0;color:var(--p);cursor:pointer;font-size:15px}
+.pdf-mode table.rt{min-width:0;font-size:10px}.pdf-mode .tbl-wrap{overflow:visible}
+.empty{text-align:center;padding:40px;color:var(--m)}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 18px;border-radius:30px;z-index:200;font-size:14px;opacity:0;transition:.3s;pointer-events:none}
+#toast.show{opacity:1}
+@media(max-width:600px){.hdr-top h1{font-size:14px}.grid{grid-template-columns:1fr}.hr-grid{grid-template-columns:1fr 1fr!important}.card{padding:13px}#report-doc{padding:10px}#report-toolbar .btn{flex:1 1 45%;font-size:13px;padding:9px 8px}.sec-title{font-size:16px}}
+@media print{#app-header,#report-toolbar,#form-footer,.noexp,.tb-acts{display:none!important}main{padding:0}.tbl-wrap{overflow:visible}table.rt{min-width:0;font-size:10px}}
+</style>
+</head>
+<body>
+<header id="app-header">
+ <div class="hdr-top"><div class="hdr-logo"><i class="fa-solid fa-truck-medical"></i></div>
+ <div><h1>چک‌لیست ارزیابی پایگاه‌های اورژانس پیش‌بیمارستانی</h1><p>دانشگاه علوم پزشکی مازندران - مدیریت حوادث و فوریت‌های پزشکی</p></div></div>
+ <nav id="main-tabs"><button class="tab-btn active" data-tab="form-view"><i class="fa-solid fa-pen-to-square"></i> تکمیل فرم</button><button class="tab-btn" data-tab="report-view"><i class="fa-solid fa-table"></i> جداول و خروجی</button></nav>
+</header>
+<main>
+ <section id="form-view">
+  <nav id="step-nav"></nav>
+  <div id="progress"><i></i></div>
+  <form id="eval-form" onsubmit="return false"></form>
+ </section>
+ <section id="report-view" class="hidden">
+  <div id="report-toolbar">
+   <button class="btn btn-g" id="btn-xlsx"><i class="fa-solid fa-file-excel"></i> اکسل</button>
+   <button class="btn btn-b" id="btn-doc"><i class="fa-solid fa-file-word"></i> ورد</button>
+   <button class="btn btn-p" id="btn-pdf"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+   <button class="btn btn-l" id="btn-print"><i class="fa-solid fa-print"></i> چاپ</button>
+   <button class="btn btn-l" id="btn-back"><i class="fa-solid fa-arrow-right"></i> بازگشت به فرم</button>
+  </div>
+  <div id="report-doc"><div class="empty"><i class="fa-solid fa-clipboard-list fa-3x"></i><p>ابتدا فرم را تکمیل و دکمه «ثبت و نمایش» را بزنید.</p></div></div>
+ </section>
+</main>
+<footer id="form-footer"><div class="in">
+ <button class="btn btn-l" id="btn-prev"><i class="fa-solid fa-chevron-right"></i> قبلی</button>
+ <button class="btn btn-l btn-sm" id="btn-reset" title="پاک کردن فرم"><i class="fa-solid fa-rotate-left"></i></button>
+ <button class="btn btn-b" id="btn-next">بعدی <i class="fa-solid fa-chevron-left"></i></button>
+ <button class="btn btn-g hidden" id="btn-submit"><i class="fa-solid fa-check"></i> ثبت و نمایش</button>
+</div></footer>
+<div id="cal-pop" class="hidden"></div>
+<div id="toast"></div>
+<script>
+/* ================= تعریف ساختار چک‌لیست ================= */
+const YN=['دارد','ندارد'];
+const st3=(g,m,b)=>[{v:'خوب',d:g},{v:'متوسط',d:m},{v:'بد',d:b}];
+const stFull=(g,m,b)=>[{v:'کامل',d:g},{v:'ناقص',d:m},{v:'عدم موجودی',d:b}];
+const REPAIR={k:'repair',t:'تعداد نیازمند تعمیر/تعویض',type:'number'};
+const DESC={k:'desc',t:'توضیحات',type:'textarea',wide:1};
+const showHas={f:'has',eq:'دارد'};
+/* سازنده کارت تجهیزات */
+function eq(k,t,icon,extra,stOpts){
+ const fs=[{k:'has',t:'وضعیت موجودی',type:'chips',opts:YN}];
+ const w=showHas;
+ fs.push({k:'count',t:'تعداد کل موجود',type:'number',when:w});
+ fs.push({k:'status',t:'وضعیت عملکرد',type:'status',opts:stOpts||st3('سالم، کالیبره و کاملاً عملیاتی','کارکرد دارد ولی نقص جزئی/نیاز به سرویس','خراب، غیرعملیاتی یا غیرقابل اطمینان'),when:w});
+ (extra||[]).forEach(e=>{e.when=e.when||w;fs.push(e)});
+ fs.push(Object.assign({},REPAIR,{when:w}));
+ fs.push(DESC);
+ return {type:'group',k,t,icon,fields:fs};
+}
+const SECTIONS=[
+{id:'base',t:'مشخصات کلی پایگاه',icon:'fa-hospital',fields:[
+ {k:'evaluator',t:'نام و نام خانوادگی ارزیاب',type:'text',ph:'مثلاً: دکتر ...'},
+ {k:'evalRole',t:'سمت ارزیاب',type:'select',opts:['کارشناس ستاد','مسئول نظارت و پایش','رئیس اورژانس شهرستان','کارشناس کنترل عملیات','کارشناس آموزش','کارشناس تجهیزات پزشکی']},
+ {k:'name',t:'نام پایگاه',type:'text',req:1},
+ {k:'county',t:'نام شهرستان پایگاه',type:'select',req:1,opts:['نکا','تنکابن','گلوگاه','بابلسر','بهشهر','قائم‌شهر','سیمرغ','چالوس','میاندرود','نوشهر','رامسر','عباس‌آباد','آمل','نور','سوادکوه مرکزی','سوادکوه شمالی','جویبار','ساری','فریدونکنار','محمودآباد']},
+ {k:'type',t:'نوع پایگاه',type:'chips',opts:['شهری','جاده‌ای','هوایی']},
+ {k:'code',t:'کدینگ پایگاه',type:'text'},
+ {k:'manager',t:'نام مسئول پایگاه',type:'text'},
+ {k:'regionManager',t:'نام مسئول منطقه',type:'text'},
+ {k:'pop',t:'جمعیت تحت پوشش (نفر)',type:'number'},
+ {k:'date',t:'تاریخ ارزیابی',type:'date',req:1},
+ {k:'addr',t:'آدرس پایگاه',type:'textarea',wide:1}
+]},
+{id:'amb',t:'مشخصات آمبولانس پایگاه',icon:'fa-truck-medical',fields:[
+ {type:'repeat',k:'list',t:'آمبولانس',addT:'افزودن آمبولانس',min:1,fields:[
+  {k:'model',t:'نوع آمبولانس',type:'select',opts:['بنز اسپرینتر ۳۱۴','بنز اسپرینتر ۳۱۵','تویوتا هایلوکس','تویوتا هایس قدیم','تویوتا هایس جدید (های‌روف)','ون وانا','موتورلانس','موتور چهارچرخ','اتوبوس آمبولانس','فورد ترانزیت','ایسوزو','رنو مستر']},
+  {k:'own',t:'مالکیت',type:'select',opts:['دانشگاه (اورژانس)','شبکه بهداشت','استیجاری','اهدایی (خیرین)','امانی (سایر دستگاه‌ها)','هلال احمر']},
+  {k:'code',t:'کدینگ آمبولانس',type:'text'},
+  {k:'year',t:'سال ساخت (میلادی)',type:'year'},
+  {k:'tip',t:'تیپ آمبولانس',type:'chips',opts:['A','B','C']},
+  {k:'renew',t:'نیاز به بازسازی',type:'chips',opts:YN},
+  {k:'tech',t:'وضعیت فنی آمبولانس',type:'status',wide:1,opts:st3('موتور، بدنه، ترمز، تایر و سیستم‌ها سالم و آماده عملیات','نقص‌های جزئی فنی یا بدنه، قابل استفاده با نیاز به سرویس','نقص جدی فنی، توقف مکرر، خطر در عملیات')},
+  DESC]}
+]},
+{id:'equip',t:'تجهیزات آمبولانس',icon:'fa-kit-medical',fields:[
+ eq('vent','ونتیلاتور','fa-lungs'),
+ {type:'group',k:'ppe',t:'تجهیزات حفاظت فردی (PPE)',icon:'fa-head-side-mask',fields:[
+  {k:'status',t:'وضعیت کلی',type:'status',opts:stFull('همه اقلام به تعداد کافی موجود','برخی اقلام موجود نیست یا کم است','اقلام حفاظتی موجود نیست')},
+  {k:'items',t:'اقلام موجود',type:'multi',opts:['ماسک','دستکش','گان','شیلد','عینک محافظ','کلاه (Cap)','پاپوش','ماسک N95','محلول ضدعفونی دست']},
+  REPAIR,DESC]},
+ eq('stretcher','برانکارد','fa-bed-pulse'),
+ eq('suction','ساکشن','fa-pump-medical'),
+ eq('o2c','اکسیژن سنترال (سیلندر بزرگ)','fa-wind',[
+  {k:'main',t:'کپسول اصلی',type:'chips',opts:['پر و سالم','نیمه‌پر','خالی','معیوب']},
+  {k:'aux',t:'کپسول کمکی (رزرو)',type:'chips',opts:['دارد - سالم','دارد - معیوب','ندارد']},
+  {k:'reg',t:'مانومتر و رگولاتور',type:'chips',opts:['سالم','معیوب','ندارد']}]),
+ eq('o2p','اکسیژن پرتابل (کپسول کوچک)','fa-spray-can'),
+ {type:'group',k:'jump',t:'جامپ‌بگ (تجهیزات و داروها)',icon:'fa-briefcase-medical',fields:[
+  {k:'status',t:'وضعیت',type:'status',opts:st3('تجهیزات و داروها کامل، مرتب و دارای تاریخ مصرف معتبر','کمبود برخی اقلام یا نظم ناکافی','کمبود جدی یا داروهای تاریخ‌گذشته')},
+  {k:'items',t:'اقلام بررسی‌شده',type:'multi',opts:['داروهای احیا','آمبوبگ و ماسک','ست راه هوایی (ایروی/لارنگوسکوپ)','ست سرم و آنژیوکت','گلوکومتر','فشارسنج و گوشی','پالس اکسیمتر','آتل و کلار گردنی','ست پانسمان']},
+  REPAIR,DESC]},
+ eq('defib','الکتروشوک (دفیبریلاتور/مانیتور)','fa-heart-pulse'),
+ {type:'group',k:'cabin',t:'تجهیزات کابین (کولر، برق، آلارم و آژیر)',icon:'fa-bell',fields:[
+  {k:'status',t:'وضعیت کلی',type:'status',opts:st3('همه سیستم‌های کابین سالم و فعال','برخی سیستم‌ها نقص جزئی دارند','سیستم‌های اصلی کابین خراب یا غیرفعال')},
+  {k:'items',t:'اقلام سالم و فعال',type:'multi',opts:['کولر','بخاری','برق کابین عقب','برق کابین جلو','آلارم','آژیر','چراغ گردان','روشنایی کابین بیمار','اینورتر/پریز برق','بی‌سیم خودرو','GPS/AVL']},
+  REPAIR,DESC]},
+ {type:'repeat',k:'other',t:'سایر تجهیزات',addT:'افزودن تجهیزات جدید',min:0,fields:[
+  {k:'name',t:'نام تجهیزات',type:'text'},
+  {k:'has',t:'وضعیت موجودی',type:'chips',opts:YN},
+  {k:'count',t:'تعداد کل',type:'number'},
+  {k:'status',t:'وضعیت عملکرد',type:'status',opts:st3('سالم و عملیاتی','نقص جزئی','خراب/غیرعملیاتی')},
+  REPAIR,DESC]}
+]},
+{id:'bld',t:'مشخصات ساختمان پایگاه',icon:'fa-building',fields:[
+ {k:'own',t:'مالکیت ساختمان',type:'select',opts:['دانشگاه (اورژانس)','شبکه بهداشت','استیجاری','اهدایی (خیرین)','واگذاری شهرداری','واگذاری سایر دستگاه‌ها (راهداری، هلال احمر و...)']},
+ {k:'ownDesc',t:'توضیحات مالکیت',type:'text'},
+ {k:'struct',t:'نوع سازه',type:'select',opts:['ساختمان (سوئیت)','کانکس','ساختمان پیش‌ساخته','ساختمان آپارتمانی','ساختمان مشترک با مرکز بهداشتی/درمانی','سوله']},
+ {k:'cond',t:'وضعیت سازه',type:'status',wide:1,opts:[{v:'نوساز',d:'کمتر از ۵ سال یا تازه بازسازی‌شده'},{v:'خوب',d:'سالم و بدون نیاز به تعمیر اساسی'},{v:'متوسط',d:'نیاز به تعمیرات جزئی'},{v:'فرسوده - نیازمند بازسازی',d:'نیاز به بازسازی اساسی'},{v:'فرسوده - غیرقابل سکونت',d:'خطرناک و نیازمند جایگزینی'}]},
+ {k:'condDesc',t:'توضیحات وضعیت سازه',type:'textarea',wide:1},
+ {k:'areaStd',t:'متراژ ساختمان',type:'chips',opts:['استاندارد','غیراستاندارد']},
+ {k:'areaTotal',t:'متراژ کل / زیربنا (متر مربع)',type:'number'},
+ {k:'areaLive',t:'متراژ سکونت‌گاه / بنا (متر مربع)',type:'number'},
+ {k:'door',t:'درب ورودی',type:'chips',opts:YN},
+ {k:'doorType',t:'نوع درب',type:'chips',opts:['آهنی (دستی)','ریموت‌دار'],when:{f:'door',eq:'دارد'}},
+ {k:'ups',t:'UPS درب ریموت‌دار',type:'chips',opts:YN,when:{f:'doorType',eq:'ریموت‌دار'}},
+ {k:'doorDesc',t:'توضیحات درب ورودی',type:'text',when:{f:'door',eq:'دارد'}},
+ {k:'sec',t:'امنیت فیزیکی',type:'multi',wide:1,opts:['حصارکشی','هم‌جواری با پلیس','هم‌جواری با درمانگاه/بیمارستان','لوازم اطفای حریق','دوربین مداربسته','روشنایی محوطه','نگهبانی','سیستم اعلام حریق']},
+ {k:'secDesc',t:'توضیحات امنیت فیزیکی',type:'text',wide:1},
+ {k:'road',t:'دسترسی سریع به راه ارتباطی اصلی',type:'chips',opts:YN},
+ {k:'roadDesc',t:'توضیحات دسترسی',type:'text'},
+ {k:'util',t:'انشعابات',type:'multi',opts:['آب','برق','گاز','تلفن ثابت','اینترنت','فاضلاب']},
+ {k:'utilDesc',t:'توضیحات انشعابات',type:'text'}
+]},
+{id:'edu',t:'آموزش',icon:'fa-graduation-cap',fields:[
+ {k:'books',t:'کتاب و جزوات آموزشی',type:'chips',opts:YN},
+ {k:'booksDesc',t:'توضیحات',type:'text'},
+ {k:'brief',t:'جلسات بریفینگ و آموزشی',type:'chips',opts:['برگزار می‌شود','برگزار نمی‌شود']},
+ {k:'freq',t:'دوره برگزاری',type:'chips',opts:['هفتگی','ماهانه','فصلی','سالانه'],when:{f:'brief',eq:'برگزار می‌شود'}},
+ {k:'briefDesc',t:'توضیحات جلسات',type:'textarea',wide:1}
+]},
+{id:'cond',t:'وضعیت پایگاه',icon:'fa-clipboard-check',fields:[
+ {type:'group',k:'look',t:'وضعیت ظاهری پایگاه',icon:'fa-broom',fields:[
+  {k:'status',t:'وضعیت',type:'status',opts:st3('نظافت مطلوب، دیوارها و کابینت سالم، تابلو و روشنایی کامل','نظافت نسبی، فرسودگی جزئی دیوار/کابینت یا نقص روشنایی','نظافت نامطلوب، تخریب دیوار/کابینت، فاقد تابلو یا روشنایی')},
+  {k:'items',t:'موارد دارای نقص',type:'multi',opts:['نظافت','دیوارها','کابینت','تابلو سردرب','روشنایی محوطه','سرویس بهداشتی','آشپزخانه','پارکینگ آمبولانس']},DESC]},
+ {type:'group',k:'forms',t:'فرم‌ها و دفاتر مأموریت',icon:'fa-folder-open',fields:[
+  {k:'status',t:'وضعیت',type:'status',opts:[{v:'کامل',d:'همه فرم‌ها و دفاتر موجود و به‌روز'},{v:'ناقص',d:'برخی فرم‌ها موجود نیست یا ناقص تکمیل شده'},{v:'بسیار ناقص / ندارد',d:'اکثر فرم‌ها و دفاتر موجود نیست'}]},
+  {k:'items',t:'فرم‌ها و دفاتر موجود',type:'multi',opts:['فرم امتناع از درمان/انتقال','فرم اموال بیمار','فرم دارو','دفتر مأموریت','فرم تحویل و تحول شیفت','دفتر چک تجهیزات','دفتر حضور و غیاب','فرم گزارش حوادث']},DESC]},
+ {type:'group',k:'staff',t:'وضعیت ظاهری پرسنل',icon:'fa-user-nurse',fields:[
+  {k:'status',t:'وضعیت',type:'status',opts:st3('لباس فرم کامل، کارت شناسایی و آراستگی مناسب','نقص جزئی در لباس فرم یا آراستگی','عدم رعایت لباس فرم و پوشش حرفه‌ای')},DESC]},
+ {type:'group',k:'shift',t:'فرایند تحویل شیفت',icon:'fa-people-arrows',fields:[
+  {k:'status',t:'وضعیت',type:'status',opts:st3('بررسی دفاتر، آمبولانس و تجهیزات به‌طور کامل و مکتوب','تحویل انجام می‌شود ولی ناقص یا غیرمکتوب','تحویل شیفت اصولی انجام نمی‌شود')},DESC]},
+ {type:'group',k:'welfare',t:'تجهیزات رفاهی',icon:'fa-couch',fields:[
+  {k:'status',t:'وضعیت کلی',type:'status',opts:st3('تجهیزات کامل، سالم و کافی','کمبود یا فرسودگی برخی اقلام','کمبود جدی یا خرابی اکثر اقلام')},
+  {k:'items',t:'اقلام موجود و سالم',type:'multi',opts:['تخت','کمد','یخچال','اجاق گاز','کولر','شوفاژ/رادیاتور','مایکروفر','تلویزیون','آبگرمکن','ماشین لباسشویی','میز و صندلی']},DESC]},
+ {type:'group',k:'comm',t:'سیستم ارتباطی',icon:'fa-tower-broadcast',fields:[
+  {k:'status',t:'وضعیت کلی',type:'status',opts:st3('همه سیستم‌ها فعال و ارتباط پایدار','برخی سیستم‌ها نقص یا ارتباط ناپایدار','ارتباط مختل یا سیستم‌ها خراب')},
+  {k:'items',t:'اقلام موجود و فعال',type:'multi',opts:['دکل','بی‌سیم ثابت','بی‌سیم دستی','تلفن','کامپیوتر','اینترنت','تبلت/سامانه ثبت مأموریت','پرینتر']},DESC]}
+]},
+{id:'hr',t:'نیروی انسانی',icon:'fa-users',fields:[{type:'hr',k:'rows'},{k:'desc',t:'توضیحات نیروی انسانی',type:'textarea',wide:1}]},
+{id:'cost',t:'برآورد هزینه‌ها',icon:'fa-coins',fields:[{type:'cost',k:'rows'}]},
+{id:'final',t:'جمع‌بندی نهایی و پیشنهادات',icon:'fa-flag-checkered',fields:[
+ {k:'score',t:'ارزیابی کلی پایگاه',type:'status',wide:1,opts:[{v:'عالی',d:'بدون نقص قابل توجه'},{v:'خوب',d:'نواقص جزئی'},{v:'متوسط',d:'نیازمند اقدامات اصلاحی'},{v:'ضعیف',d:'نیازمند اقدام فوری'}]},
+ {k:'text',t:'جمع‌بندی نهایی و پیشنهادات ارزیاب',type:'textarea',wide:1,big:1}
+]}
+];
+const HR_COLS=['تعداد مصوب','تعداد موجود','رسمی','پیمانی','طرحی','شرکتی','قراردادی','کمبود'];
+const HR_DEF=['کارشناس فوریت‌های پزشکی','کاردان فوریت‌های پزشکی','راننده امدادگر'];
+const COST_SECTORS=['آمبولانس','تجهیزات آمبولانس','ساختمان','وضعیت ظاهری','تجهیزات رفاهی','سیستم ارتباطی','آموزش','نیروی انسانی'];
+</script>
+<script>
+/* ================= موتور فرم ================= */
+const LS_KEY='ems_checklist_v1';
+const OTHER='سایر';
+let state={}; let step=0;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const faNum=n=>Number(n||0).toLocaleString('fa-IR');
+const toEn=s=>String(s==null?'':s).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+const num=v=>{const n=parseFloat(toEn(v).replace(/[,،٬\s]/g,''));return isNaN(n)?0:n};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2300)}
+
+/* ---------- path helpers ---------- */
+function getP(p){return p.split('.').reduce((o,k)=>o==null?undefined:o[k],state)}
+function setP(p,v){const ks=p.split('.');let o=state;ks.slice(0,-1).forEach((k,i)=>{if(o[k]==null)o[k]=/^\d+$/.test(ks[i+1])?[]:{};o=o[k]});o[ks[ks.length-1]]=v;save()}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify({state,step}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(LS_KEY));if(d&&d.state){state=d.state;step=d.step||0}}catch(e){}}
+function initState(){
+ SECTIONS.forEach(s=>{state[s.id]=state[s.id]||{};s.fields.forEach(f=>{
+  if(f.type==='repeat'&&!state[s.id][f.k]){state[s.id][f.k]=[];for(let i=0;i<(f.min||0);i++)state[s.id][f.k].push({})}
+  if(f.type==='group'&&!state[s.id][f.k])state[s.id][f.k]={};
+ })});
+ if(!state.hr.rows)state.hr.rows=HR_DEF.map(r=>({role:r}));
+ if(!state.cost.rows)state.cost.rows=[{}];
+}
+
+/* ---------- Jalali calendar ---------- */
+const div=(a,b)=>~~(a/b);
+function jalCal(jy){const br=[-61,9,38,199,426,686,756,818,1111,1181,1210,1635,2060,2097,2192,2262,2324,2394,2456,3178];let gy=jy+621,leapJ=-14,jp=br[0],jm,jump,n;for(let i=1;i<br.length;i++){jm=br[i];jump=jm-jp;if(jy<jm)break;leapJ+=div(jump,33)*8+div(jump%33,4);jp=jm}n=jy-jp;leapJ+=div(n,33)*8+div(n%33+3,4);if(jump%33===4&&jump-n===4)leapJ++;const leapG=div(gy,4)-div((div(gy,100)+1)*3,4)-150;const march=20+leapJ-leapG;if(jump-n<6)n=n-jump+div(jump+4,33)*33;let leap=((n+1)%33-1)%4;if(leap===-1)leap=4;return{leap,gy,march}}
+function g2d(gy,gm,gd){let d=div((gy+div(gm-8,6)+100100)*1461,4)+div(153*((gm+9)%12)+2,5)+gd-34840408;return d-div(div(gy+100100+div(gm-8,6),100)*3,4)+752}
+function d2g(jdn){let j=4*jdn+139361631;j=j+div(div(4*jdn+183187720,146097)*3,4)*4-3908;const i=div(j%1461,4)*5+308;const gd=div(i%153,5)+1,gm=div(i,153)%12+1;return{gy:div(j,1461)-100100+div(8-gm,6),gm,gd}}
+function j2d(jy,jm,jd){const r=jalCal(jy);return g2d(r.gy,3,r.march)+(jm-1)*31-div(jm,7)*(jm-7)+jd-1}
+function d2j(jdn){const gy=d2g(jdn).gy;let jy=gy-621;const r=jalCal(jy);let k=jdn-g2d(gy,3,r.march);if(k>=0){if(k<=185)return{jy,jm:1+div(k,31),jd:k%31+1};k-=186}else{jy--;k+=179;if(r.leap===1)k++}return{jy,jm:7+div(k,30),jd:k%30+1}}
+function todayJ(){const t=new Date();return d2j(g2d(t.getFullYear(),t.getMonth()+1,t.getDate()))}
+function mLen(y,m){return m<=6?31:m<=11?30:(jalCal(y).leap===0?30:29)}
+const JM=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const pad=n=>String(n).padStart(2,'0');
+const fmtJ=d=>d.jy+'/'+pad(d.jm)+'/'+pad(d.jd);
+let calPath=null,calY,calM;
+function openCal(path){calPath=path;const v=getP(path);let d=todayJ();if(v&&/^\d{4}\/\d{2}\/\d{2}$/.test(v)){const a=v.split('/').map(Number);d={jy:a[0],jm:a[1],jd:a[2]}}calY=d.jy;calM=d.jm;drawCal();$('#cal-pop').classList.remove('hidden')}
+function drawCal(){
+ const v=getP(calPath),t=todayJ(),tStr=fmtJ(t);
+ const g=d2g(j2d(calY,calM,1));const first=(new Date(g.gy,g.gm-1,g.gd).getDay()+1)%7;
+ let yo='';for(let y=t.jy+1;y>=1390;y--)yo+='<option'+(y===calY?' selected':'')+'>'+y+'</option>';
+ let mo=JM.map((m,i)=>'<option value="'+(i+1)+'"'+(i+1===calM?' selected':'')+'>'+m+'</option>').join('');
+ let cells=['ش','ی','د','س','چ','پ','ج'].map(d=>'<span>'+d+'</span>').join('');
+ for(let i=0;i<first;i++)cells+='<i></i>';
+ for(let d=1;d<=mLen(calY,calM);d++){const s=fmtJ({jy:calY,jm:calM,jd:d});cells+='<button type="button" data-d="'+s+'" class="'+(s===v?'sel ':'')+(s===tStr?'td':'')+'">'+faNum(d)+'</button>'}
+ $('#cal-pop').innerHTML='<div class="cal" role="dialog" aria-label="انتخاب تاریخ"><div class="cal-h"><button type="button" class="btn btn-l btn-sm" data-cm="-1"><i class="fa-solid fa-chevron-right"></i></button><div><select id="cal-m">'+mo+'</select> <select id="cal-y">'+yo+'</select></div><button type="button" class="btn btn-l btn-sm" data-cm="1"><i class="fa-solid fa-chevron-left"></i></button></div><div class="cal-g">'+cells+'</div><div class="cal-today"><button type="button" class="btn btn-b btn-sm" data-d="'+tStr+'">امروز ('+tStr+')</button><button type="button" class="btn btn-l btn-sm" data-close="1">بستن</button></div></div>';
+}
+document.addEventListener('click',e=>{
+ const pop=$('#cal-pop');if(pop.classList.contains('hidden'))return;
+ const b=e.target.closest('[data-d],[data-cm],[data-close]');
+ if(e.target===pop||(b&&b.dataset.close)){pop.classList.add('hidden');return}
+ if(!b)return;
+ if(b.dataset.cm){calM+=+b.dataset.cm;if(calM<1){calM=12;calY--}if(calM>12){calM=1;calY++}drawCal()}
+ else if(b.dataset.d){setP(calPath,b.dataset.d);pop.classList.add('hidden');renderStep()}
+});
+document.addEventListener('change',e=>{if(e.target.id==='cal-m'){calM=+e.target.value;drawCal()}if(e.target.id==='cal-y'){calY=+e.target.value;drawCal()}});
+
+/* ---------- field rendering ---------- */
+function otherInput(path,obj,k){return '<input type="text" class="other-in" data-path="'+path+'_o" value="'+esc(obj[k+'_o'])+'" placeholder="گزینه مورد نظر را تایپ کنید...">'}
+function renderField(f,base,obj){
+ if(f.when&&obj[f.when.f]!==f.when.eq)return'';
+ const p=base+'.'+f.k,v=obj[f.k];let h='';
+ const lb='<label class="lb">'+esc(f.t)+(f.req?' <span style="color:var(--p)">*</span>':'')+'</label>';
+ switch(f.type){
+  case'text':h='<input type="text" data-path="'+p+'" value="'+esc(v)+'" placeholder="'+esc(f.ph||'')+'">';break;
+  case'number':h='<input type="number" inputmode="numeric" min="0" data-path="'+p+'" value="'+esc(v)+'">';break;
+  case'textarea':h='<textarea data-path="'+p+'"'+(f.big?' style="min-height:180px"':'')+'>'+esc(v)+'</textarea>';break;
+  case'select':case'year':{
+   let opts=f.type==='year'?Array.from({length:new Date().getFullYear()-1979},(_,i)=>String(new Date().getFullYear()+1-i)):f.opts;
+   h='<select data-path="'+p+'" data-rr="1"><option value="">— انتخاب کنید —</option>'+opts.concat(OTHER).map(o=>'<option'+(o===v?' selected':'')+'>'+esc(o)+'</option>').join('')+'</select>';
+   if(v===OTHER)h+=otherInput(p,obj,f.k);break}
+  case'chips':h='<div class="chips">'+f.opts.concat(OTHER).map(o=>'<span class="chip'+(o===v?' on':'')+'" role="radio" aria-checked="'+(o===v)+'" tabindex="0" data-chip="'+p+'" data-v="'+esc(o)+'">'+esc(o)+'</span>').join('')+'</div>';
+   if(v===OTHER)h+=otherInput(p,obj,f.k);break;
+  case'multi':{const a=Array.isArray(v)?v:[];h='<div class="chips">'+f.opts.concat(OTHER).map(o=>'<span class="chip multi'+(a.includes(o)?' on':'')+'" role="checkbox" aria-checked="'+a.includes(o)+'" tabindex="0" data-multi="'+p+'" data-v="'+esc(o)+'">'+esc(o)+'</span>').join('')+'</div>';
+   if(a.includes(OTHER))h+=otherInput(p,obj,f.k);break}
+  case'status':h='<div class="st-grid">'+f.opts.map((o,i)=>'<div class="st-opt s'+i+(o.v===v?' on':'')+'" role="radio" tabindex="0" data-chip="'+p+'" data-v="'+esc(o.v)+'"><b>'+esc(o.v)+'</b>('+esc(o.d)+')</div>').join('')+'</div>';break;
+  case'date':h='<div class="date-row"><input type="text" readonly data-cal="'+p+'" value="'+esc(v)+'" placeholder="انتخاب از تقویم شمسی"><button type="button" class="btn btn-b" data-cal="'+p+'"><i class="fa-regular fa-calendar"></i></button><button type="button" class="btn btn-l" data-today="'+p+'">امروز</button></div>';break;
+ }
+ return '<div class="fld'+(f.wide||f.type==='multi'||f.type==='status'||f.type==='textarea'?' wide':'')+'">'+lb+h+'</div>';
+}
+function renderFields(fields,base,obj){return '<div class="grid">'+fields.map(f=>renderField(f,base,obj)).join('')+'</div>'}
+function renderBlock(f,sid){
+ const o=state[sid];
+ if(f.type==='group')return '<div class="card"><div class="card-h"><span><i class="fa-solid '+(f.icon||'fa-circle')+'"></i> '+esc(f.t)+'</span></div>'+renderFields(f.fields,sid+'.'+f.k,o[f.k])+'</div>';
+ if(f.type==='repeat'){
+  let h=o[f.k].map((it,i)=>'<div class="card"><div class="card-h"><span><i class="fa-solid fa-hashtag"></i> '+esc(f.t)+' '+faNum(i+1)+'</span><button type="button" class="btn btn-sm btn-del" data-rdel="'+sid+'.'+f.k+'" data-i="'+i+'"><i class="fa-solid fa-trash"></i> حذف</button></div>'+renderFields(f.fields,sid+'.'+f.k+'.'+i,it)+'</div>').join('');
+  return h+'<button type="button" class="btn btn-b" style="width:100%;margin-bottom:14px" data-radd="'+sid+'.'+f.k+'"><i class="fa-solid fa-plus"></i> '+esc(f.addT)+'</button>';
+ }
+ if(f.type==='hr'){
+  const rows=o.rows;let tot=HR_COLS.map(()=>0);
+  let h=rows.map((r,i)=>{const sh=Math.max(0,num(r.c0)-num(r.c1));tot=tot.map((t,j)=>t+(j===7?sh:num(r['c'+j])));
+   return '<div class="card"><div class="card-h"><input type="text" style="flex:1;border:1.5px solid var(--l);border-radius:10px;padding:8px;font-weight:700;color:var(--b)" data-path="hr.rows.'+i+'.role" value="'+esc(r.role)+'" placeholder="عنوان شغلی"><button type="button" class="btn btn-sm btn-del" data-rdel="hr.rows" data-i="'+i+'"><i class="fa-solid fa-trash"></i></button></div><div class="grid hr-grid">'+
+   HR_COLS.map((c,j)=>'<div class="fld"><label class="lb">'+c+'</label>'+(j===7?'<input type="text" readonly value="'+faNum(sh)+'" style="background:#fdecea;color:var(--p);font-weight:800" title="محاسبه خودکار: مصوب - موجود">':'<input type="number" inputmode="numeric" min="0" data-path="hr.rows.'+i+'.c'+j+'" data-live="1" value="'+esc(r['c'+j])+'">')+'</div>').join('')+'</div></div>'}).join('');
+  return '<p class="sec-hint">ستون «کمبود» به‌صورت خودکار از تفاضل تعداد مصوب و موجود محاسبه می‌شود.</p>'+h+'<button type="button" class="btn btn-b" style="width:100%;margin-bottom:14px" data-radd="hr.rows"><i class="fa-solid fa-plus"></i> افزودن ردیف نیروی انسانی</button><div class="sum-box">جمع کل — مصوب: '+faNum(tot[0])+' | موجود: '+faNum(tot[1])+' | کمبود: '+faNum(tot[7])+'</div>';
+ }
+ if(f.type==='cost'){
+  const rows=o.rows;let sum=0;
+  let h=rows.map((r,i)=>{sum+=num(r.cost);const sp='cost.rows.'+i;
+   return '<div class="card"><div class="card-h"><span><i class="fa-solid fa-receipt"></i> ردیف '+faNum(i+1)+'</span><button type="button" class="btn btn-sm btn-del" data-rdel="cost.rows" data-i="'+i+'"><i class="fa-solid fa-trash"></i></button></div>'+
+   renderFields([{k:'title',t:'عنوان',type:'text'},{k:'sector',t:'بخش',type:'select',opts:COST_SECTORS},{k:'action',t:'شرح اقدام',type:'textarea',wide:1},{k:'cost',t:'برآورد هزینه (ریال)',type:'number'}],sp,r)+(num(r.cost)?'<p class="sec-hint" style="margin:6px 0 0">'+faNum(num(r.cost))+' ریال</p>':'')+'</div>'}).join('');
+  return h+'<button type="button" class="btn btn-b" style="width:100%;margin-bottom:14px" data-radd="cost.rows"><i class="fa-solid fa-plus"></i> افزودن ردیف هزینه</button><div class="sum-box" id="cost-sum">جمع کل برآورد هزینه: '+faNum(sum)+' ریال ('+faNum(Math.round(sum/10))+' تومان)</div>';
+ }
+ return '';
+}
+function renderStep(){
+ const s=SECTIONS[step],o=state[s.id];
+ const simple=s.fields.filter(f=>!['group','repeat','hr','cost'].includes(f.type));
+ let h='<h2 class="sec-title"><i class="fa-solid '+s.icon+'"></i> بخش '+faNum(step+1)+': '+esc(s.t)+'</h2>';
+ let buf=[];const flush=()=>{if(buf.length){h+='<div class="card">'+renderFields(buf,s.id,o)+'</div>';buf=[]}};
+ s.fields.forEach(f=>{if(simple.includes(f))buf.push(f);else{flush();h+=renderBlock(f,s.id)}});flush();
+ const y=window.scrollY;$('#eval-form').innerHTML=h;
+ $('#step-nav').innerHTML=SECTIONS.map((x,i)=>'<button type="button" class="step-pill'+(i===step?' active':'')+(i<step?' done':'')+'" data-step="'+i+'"><b>'+(i<step?'✓':faNum(i+1))+'</b>'+esc(x.t)+'</button>').join('');
+ $('#progress i').style.width=((step+1)/SECTIONS.length*100)+'%';
+ $('#btn-prev').disabled=step===0;$('#btn-prev').style.opacity=step===0?.4:1;
+ $('#btn-next').classList.toggle('hidden',step===SECTIONS.length-1);$('#btn-submit').classList.toggle('hidden',step!==SECTIONS.length-1);
+ window.scrollTo(0,y);
+ if(window._lastStep!==step){const a=$('.step-pill.active');if(a)a.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});window._lastStep=step;}
+}
+function goStep(i){step=Math.max(0,Math.min(SECTIONS.length-1,i));save();renderStep();window.scrollTo({top:0,behavior:'smooth'})}
+
+/* ---------- form events ---------- */
+const form=$('#eval-form');
+form.addEventListener('input',e=>{const p=e.target.dataset.path;if(!p)return;setP(p,e.target.value);
+ if(p.startsWith('cost.rows')&&p.endsWith('.cost')){let s=0;state.cost.rows.forEach(r=>s+=num(r.cost));const el=$('#cost-sum');if(el)el.textContent='جمع کل برآورد هزینه: '+faNum(s)+' ریال ('+faNum(Math.round(s/10))+' تومان)'}});
+form.addEventListener('change',e=>{if(e.target.dataset.rr||e.target.dataset.live)renderStep()});
+function handleClick(e){
+ const t=e.target.closest('[data-chip],[data-multi],[data-radd],[data-rdel],[data-cal],[data-today]');if(!t)return;
+ if(t.dataset.chip){const p=t.dataset.chip;setP(p,getP(p)===t.dataset.v?'':t.dataset.v)}
+ else if(t.dataset.multi){const p=t.dataset.multi;let a=getP(p);a=Array.isArray(a)?a.slice():[];const i=a.indexOf(t.dataset.v);i>-1?a.splice(i,1):a.push(t.dataset.v);setP(p,a)}
+ else if(t.dataset.radd){const a=getP(t.dataset.radd);a.push(t.dataset.radd==='hr.rows'?{role:''}:{});save()}
+ else if(t.dataset.rdel){if(!confirm('این ردیف حذف شود؟'))return;getP(t.dataset.rdel).splice(+t.dataset.i,1);save()}
+ else if(t.dataset.cal){openCal(t.dataset.cal);return}
+ else if(t.dataset.today){setP(t.dataset.today,fmtJ(todayJ()))}
+ renderStep();
+}
+form.addEventListener('click',handleClick);
+form.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.chip,.st-opt')){e.preventDefault();handleClick(e)}});
+$('#step-nav').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(b)goStep(+b.dataset.step)});
+$('#btn-prev').onclick=()=>goStep(step-1);
+$('#btn-next').onclick=()=>goStep(step+1);
+$('#btn-reset').onclick=()=>{if(confirm('همه اطلاعات واردشده پاک شود و فرم جدید آغاز گردد؟')){state={};step=0;initState();save();renderStep();$('#report-doc').innerHTML='<div class="empty"><p>فرم جدید آغاز شد.</p></div>';toast('فرم پاک شد')}};
+$('#btn-submit').onclick=()=>{
+ const b=state.base,miss=[];if(!b.name)miss.push('نام پایگاه');if(!b.county)miss.push('شهرستان');if(!b.date)miss.push('تاریخ ارزیابی');
+ if(miss.length&&!confirm('موارد ضروری تکمیل نشده: '+miss.join('، ')+'\nآیا مایلید ادامه دهید؟')){goStep(0);return}
+ buildReport();showTab('report-view');toast('اطلاعات ثبت شد ✓');
+};
+function showTab(id){$$('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));$('#form-view').classList.toggle('hidden',id!=='form-view');$('#report-view').classList.toggle('hidden',id!=='report-view');$('#form-footer').classList.toggle('hidden',id!=='form-view');window.scrollTo(0,0)}
+$('#main-tabs').addEventListener('click',e=>{const b=e.target.closest('.tab-btn');if(!b)return;if(b.dataset.tab==='report-view'&&!$('#report-doc table'))buildReport();showTab(b.dataset.tab)});
+$('#btn-back').onclick=()=>showTab('form-view');
+/* ================= گزارش جدولی ================= */
+function fv(obj,f){if(!obj)return'';let v=obj[f.k];if(f.when&&obj[f.when.f]!==f.when.eq)return'';
+ if(Array.isArray(v)){return v.map(x=>x===OTHER&&obj[f.k+'_o']?OTHER+': '+obj[f.k+'_o']:x).join('، ')}
+ if(v===OTHER&&obj[f.k+'_o'])return OTHER+': '+obj[f.k+'_o'];
+ if(f.type==='status'&&v){const o=f.opts.find(x=>x.v===v);return o?v+' ('+o.d+')':v}
+ if(f.type==='number'&&v!==''&&v!=null)return faNum(num(v));
+ return v==null?'':String(v)}
+function td(v,cls){return '<td contenteditable="true"'+(cls?' class="'+cls+'"':'')+'>'+esc(v)+'</td>'}
+function table(id,title,icon,heads,rows,opt){opt=opt||{};
+ let h='<section class="rp-sec" data-title="'+esc(title)+'"><h3><span><i class="fa-solid '+icon+'"></i> '+esc(title)+'</span><span class="tb-acts noexp"><button data-ta="row" data-t="'+id+'">+ ردیف</button><button data-ta="col" data-t="'+id+'">+ ستون</button></span></h3><div class="tbl-wrap"><table class="rt" id="'+id+'"'+(opt.sum!=null?' data-sum="'+opt.sum+'"':'')+'><thead><tr>'+
+ heads.map(x=>'<th contenteditable="true">'+esc(x)+'</th>').join('')+'<th class="noexp" style="width:34px"></th></tr></thead><tbody>';
+ rows.forEach(r=>{h+='<tr>'+r.map((c,i)=>td(c,opt.grp&&i===0?'grp':'')).join('')+'<td class="noexp"><button class="rowdel" title="حذف ردیف"><i class="fa-solid fa-xmark"></i></button></td></tr>'});
+ h+='</tbody>'+(opt.sum!=null?'<tfoot></tfoot>':'')+'</table></div></section>';return h}
+const flds=(sid)=>SECTIONS.find(s=>s.id===sid).fields;
+function kv(sid,obj){return flds(sid).filter(f=>f.k&&!['group','repeat','hr','cost'].includes(f.type)).map(f=>[f.t,fv(obj,f)])}
+function buildReport(){
+ const S=state,b=S.base;
+ const R=[];
+ // 1 base
+ R.push(table('t-base','۱. مشخصات کلی پایگاه','fa-hospital',['عنوان','مقدار'],kv('base',b)));
+ // 2 amb
+ const af=flds('amb')[0].fields;
+ R.push(table('t-amb','۲. مشخصات آمبولانس‌های پایگاه','fa-truck-medical',['ردیف'].concat(af.map(f=>f.t)),S.amb.list.map((a,i)=>[faNum(i+1)].concat(af.map(f=>fv(a,f))))));
+ // 3 equip
+ const er=[];let repTot=0;
+ flds('equip').forEach(g=>{
+  const items=g.type==='repeat'?S.equip[g.k].map(o=>({o,name:o.name||'—',fs:g.fields})):[{o:S.equip[g.k],name:g.t,fs:g.fields}];
+  items.forEach(({o,name,fs})=>{const F=k=>fs.find(f=>f.k===k);const gv=k=>F(k)?fv(o,F(k)):'';
+   const extra=fs.filter(f=>!['has','count','status','repair','desc','name'].includes(f.k)).map(f=>{const v=fv(o,f);return v?f.t+': '+v:''}).filter(Boolean).join(' | ');
+   repTot+=num(o.repair);er.push([name,gv('has'),gv('count'),gv('status'),extra,gv('repair'),gv('desc')])})});
+ R.push(table('t-equip','۳. تجهیزات آمبولانس','fa-kit-medical',['تجهیزات','موجودی','تعداد کل','وضعیت','جزئیات / اقلام','نیاز به تعمیر (تعداد)','توضیحات'],er,{grp:1}));
+ // 4,5
+ R.push(table('t-bld','۴. مشخصات ساختمان پایگاه','fa-building',['عنوان','مقدار'],kv('bld',S.bld)));
+ R.push(table('t-edu','۵. آموزش','fa-graduation-cap',['عنوان','مقدار'],kv('edu',S.edu)));
+ // 6
+ R.push(table('t-cond','۶. وضعیت پایگاه','fa-clipboard-check',['موضوع ارزیابی','وضعیت','اقلام / موارد','توضیحات'],flds('cond').map(g=>{const o=S.cond[g.k],F=k=>g.fields.find(f=>f.k===k);return[g.t,fv(o,F('status')),F('items')?fv(o,F('items')):'',fv(o,F('desc'))]}),{grp:1}));
+ // 7 hr
+ const hrRows=S.hr.rows.map(r=>[r.role].concat(HR_COLS.map((c,j)=>j===7?Math.max(0,num(r.c0)-num(r.c1)):(r['c'+j]===''||r['c'+j]==null?'':num(r['c'+j])))).map(String));
+ R.push(table('t-hr','۷. نیروی انسانی','fa-users',['عنوان شغلی'].concat(HR_COLS),hrRows,{sum:'1-8',grp:1}));
+ if(S.hr.desc)R.push(table('t-hrd','توضیحات نیروی انسانی','fa-comment',['توضیحات'],[[S.hr.desc]]));
+ // 8 cost
+ R.push(table('t-cost','۸. برآورد هزینه‌ها','fa-coins',['ردیف','عنوان','بخش','شرح اقدام','برآورد هزینه (ریال)'],S.cost.rows.filter(r=>r.title||r.action||r.cost).map((r,i)=>[faNum(i+1),r.title||'',fv(r,{k:'sector'}),r.action||'',r.cost?num(r.cost).toLocaleString('en-US'):'']),{sum:'4'}));
+ // 9 final
+ R.push(table('t-final','۹. جمع‌بندی نهایی و پیشنهادات','fa-flag-checkered',['عنوان','مقدار'],kv('final',S.final)));
+ // summary
+ const ambN=S.amb.list.length,renew=S.amb.list.filter(a=>a.renew==='دارد').length,badAmb=S.amb.list.filter(a=>a.tech==='بد').length;
+ let shortage=0;S.hr.rows.forEach(r=>shortage+=Math.max(0,num(r.c0)-num(r.c1)));let cost=0;S.cost.rows.forEach(r=>cost+=num(r.cost));
+ const sum=table('t-stat','خلاصه آماری ارزیابی','fa-chart-simple',['شاخص','مقدار'],[
+  ['تعداد آمبولانس‌های پایگاه',faNum(ambN)],['آمبولانس‌های نیازمند بازسازی',faNum(renew)],['آمبولانس‌های با وضعیت فنی بد',faNum(badAmb)],
+  ['مجموع اقلام تجهیزات نیازمند تعمیر/تعویض',faNum(repTot)],['مجموع کمبود نیروی انسانی',faNum(shortage)],['جمع کل برآورد هزینه (ریال)',cost.toLocaleString('en-US')],['ارزیابی کلی پایگاه',S.final.score||'—']]);
+ const head='<div class="rp-head"><h2>گزارش ارزیابی پایگاه اورژانس پیش‌بیمارستانی</h2><p>دانشگاه علوم پزشکی مازندران - مدیریت حوادث و فوریت‌های پزشکی</p><p><b>پایگاه:</b> '+esc(b.name||'—')+' &nbsp;|&nbsp; <b>شهرستان:</b> '+esc(fv(b,{k:'county'})||'—')+' &nbsp;|&nbsp; <b>تاریخ ارزیابی:</b> '+esc(b.date||'—')+' &nbsp;|&nbsp; <b>ارزیاب:</b> '+esc(b.evaluator||'—')+'</p></div>';
+ const sign='<section class="rp-sec"><div class="tbl-wrap" style="border-top:1px solid #ddd;border-radius:8px"><table class="rt"><tr><td style="height:70px">نام و امضای ارزیاب: '+esc(b.evaluator||'')+'</td><td>نام و امضای مسئول پایگاه: '+esc(b.manager||'')+'</td><td>نام و امضای تأییدکننده:</td></tr></table></div></section>';
+ $('#report-doc').innerHTML='<p class="sec-hint noexp"><i class="fa-solid fa-circle-info"></i> همه سلول‌ها و عناوین ستون‌ها قابل ویرایش هستند (روی سلول ضربه بزنید). جداول را با کشیدن به چپ و راست اسکرول کنید.</p>'+head+sum+R.join('')+sign;
+ $$('#report-doc table[data-sum]').forEach(calcSum);
+}
+function calcSum(t){const cols=t.dataset.sum.split('-').map(Number);const from=cols[0],to=cols[1]||cols[0];const ncol=t.tHead.rows[0].cells.length-1;
+ const tot=Array(ncol).fill('');for(let c=from;c<=to;c++){let s=0;[...t.tBodies[0].rows].forEach(r=>{if(r.cells[c])s+=num(r.cells[c].textContent)});tot[c]=s.toLocaleString('en-US')}
+ tot[0]='جمع کل';t.tFoot.innerHTML='<tr class="total">'+tot.map(x=>'<td>'+esc(x)+'</td>').join('')+'<td class="noexp"></td></tr>'}
+const rdoc=$('#report-doc');
+rdoc.addEventListener('input',e=>{const t=e.target.closest('table[data-sum]');if(t)calcSum(t)});
+rdoc.addEventListener('click',e=>{
+ const d=e.target.closest('.rowdel');if(d){const t=d.closest('table');if(confirm('این ردیف حذف شود؟')){d.closest('tr').remove();if(t.dataset.sum)calcSum(t)}return}
+ const cd=e.target.closest('.coldel');if(cd){const th=cd.closest('th'),t=th.closest('table'),i=th.cellIndex;if(confirm('این ستون حذف شود؟'))[...t.rows].forEach(r=>r.cells[i]&&r.cells[i].remove());return}
+ const a=e.target.closest('[data-ta]');if(!a)return;const t=document.getElementById(a.dataset.t),n=t.tHead.rows[0].cells.length-1;
+ if(a.dataset.ta==='row'){const tr=document.createElement('tr');tr.innerHTML=Array(n).fill('<td contenteditable="true"></td>').join('')+'<td class="noexp"><button class="rowdel"><i class="fa-solid fa-xmark"></i></button></td>';t.tBodies[0].appendChild(tr);tr.cells[0].focus()}
+ else{[...t.rows].forEach((r,ri)=>{const c=document.createElement(r.parentNode.tagName==='THEAD'?'th':'td');if(r.parentNode.tagName==='THEAD')c.innerHTML='<span contenteditable="true">ستون جدید</span> <button class="coldel noexp" title="حذف ستون">×</button>';else if(r.parentNode.tagName==='TBODY')c.contentEditable='true';r.insertBefore(c,r.cells[n])})}
+});
+
+/* ================= خروجی‌ها ================= */
+function fileBase(){const b=state.base||{};return ('ارزیابی_پایگاه_'+(b.name||'')+'_'+(b.date||'')).replace(/[\/\\:*?"<>|\s]+/g,'_')}
+function cleanClone(){const c=rdoc.cloneNode(true);c.querySelectorAll('.noexp').forEach(x=>x.remove());c.querySelectorAll('[contenteditable]').forEach(x=>x.removeAttribute('contenteditable'));c.querySelectorAll('i.fa-solid').forEach(x=>x.remove());return c}
+function tableAOA(t){return [...t.rows].map(r=>[...r.cells].filter(c=>!c.classList.contains('noexp')).map(c=>{const s=c.textContent.trim().replace(/\s*×$/,'');const n=toEn(s).replace(/,/g,'');return /^-?\d+(\.\d+)?$/.test(n)&&n.length<15?Number(n):s}))}
+$('#btn-xlsx').onclick=()=>{
+ if(!$('#report-doc table'))return toast('ابتدا فرم را ثبت کنید');if(typeof XLSX==='undefined')return toast('کتابخانه اکسل بارگذاری نشد؛ اتصال اینترنت را بررسی کنید');
+ const wb=XLSX.utils.book_new();wb.Workbook={Views:[{RTL:true}]};const all=[];const used={};
+ $$('#report-doc .rp-sec').forEach((s,i)=>{const t=s.querySelector('table');if(!t)return;const title=(s.dataset.title||'امضا').replace(/[\[\]\*\?\/\\:]/g,'');const aoa=tableAOA(t);
+  all.push([title]);aoa.forEach(r=>all.push(r));all.push([]);
+  let nm=title.slice(0,28)||('Sheet'+i);while(used[nm])nm=nm.slice(0,26)+'_'+i;used[nm]=1;
+  const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=(aoa[0]||[]).map((_,c)=>({wch:Math.min(60,Math.max(12,...aoa.map(r=>String(r[c]==null?'':r[c]).length)))}));ws['!views']=[{RTL:true}];XLSX.utils.book_append_sheet(wb,ws,nm)});
+ const b=state.base||{};const head=[['گزارش ارزیابی پایگاه اورژانس پیش‌بیمارستانی - دانشگاه علوم پزشکی مازندران'],['پایگاه: '+(b.name||''),'شهرستان: '+(b.county||''),'تاریخ: '+(b.date||''),'ارزیاب: '+(b.evaluator||'')],[]];
+ const ws=XLSX.utils.aoa_to_sheet(head.concat(all));ws['!cols']=Array(10).fill({wch:28});ws['!views']=[{RTL:true}];XLSX.utils.book_append_sheet(wb,ws,'گزارش کامل');
+ wb.SheetNames.unshift(wb.SheetNames.pop());
+ XLSX.writeFile(wb,fileBase()+'.xlsx');toast('فایل اکسل دانلود شد');
+};
+const EXP_CSS='body{font-family:Vazirmatn,Tahoma,"B Nazanin",sans-serif;direction:rtl}h2{color:#8e0000;text-align:center;margin:4px}p{text-align:center;margin:3px;font-size:12px}.rp-sec{margin-bottom:14px}h3{background:#c62828;color:#fff;padding:6px 10px;margin:12px 0 0;font-size:14px}table{border-collapse:collapse;width:100%;font-size:11px;direction:rtl}th,td{border:1px solid #999;padding:5px;text-align:right;vertical-align:top}th{background:#eef2f7}.grp{background:#fff3e0;font-weight:bold}.total td{background:#e3f2fd;font-weight:bold}.sec-hint{display:none}';
+$('#btn-doc').onclick=()=>{
+ if(!$('#report-doc table'))return toast('ابتدا فرم را ثبت کنید');
+ const c=cleanClone();c.querySelectorAll('.sec-hint').forEach(x=>x.remove());
+ const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>گزارش</title>'+'<'+'!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]--'+'><style>@page{size:A4 landscape;margin:1.5cm}'+EXP_CSS+'</style></head><body dir="rtl">'+c.innerHTML+'</body></html>';
+ const blob=new Blob(['\ufeff',html],{type:'application/msword'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fileBase()+'.doc';document.body.appendChild(a);a.click();a.remove();toast('فایل ورد دانلود شد');
+};
+$('#btn-pdf').onclick=()=>{
+ if(!$('#report-doc table'))return toast('ابتدا فرم را ثبت کنید');if(typeof html2pdf==='undefined')return toast('کتابخانه PDF بارگذاری نشد؛ از دکمه چاپ استفاده کنید');
+ const c=cleanClone();c.querySelectorAll('.sec-hint').forEach(x=>x.remove());c.classList.add('pdf-mode');c.style.cssText='width:1050px;padding:16px;background:#fff;direction:rtl';
+ toast('در حال ساخت PDF...');
+ html2pdf().set({margin:[8,8,8,8],filename:fileBase()+'.pdf',image:{type:'jpeg',quality:.96},html2canvas:{scale:2,useCORS:true,letterRendering:false},jsPDF:{unit:'mm',format:'a4',orientation:'landscape'},pagebreak:{mode:['css','legacy'],avoid:['tr','h3','.rp-head']}}).from(c).save().then(()=>toast('فایل PDF دانلود شد')).catch(()=>toast('خطا در ساخت PDF؛ از دکمه چاپ استفاده کنید'));
+};
+$('#btn-print').onclick=()=>{if(!$('#report-doc table'))return toast('ابتدا فرم را ثبت کنید');window.print()};
+load();initState();renderStep();
+</script>
+</body>
+</html>
